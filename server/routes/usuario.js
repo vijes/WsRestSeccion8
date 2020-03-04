@@ -1,5 +1,7 @@
 const express = require('express');
 const Usuario = require('../models/usuario');
+const bcrypt = require('bcrypt');
+const _ = require('underscore');
 
 const app = express();
 
@@ -15,7 +17,7 @@ app.post('/usuario', function(req, res) {
     let usuario = new Usuario({
         nombre: body.nombre,
         email: body.email,
-        password: body.password,
+        password: bcrypt.hashSync(body.password, 10),
         role: body.role
     });
 
@@ -23,38 +25,34 @@ app.post('/usuario', function(req, res) {
         if (err) {
             return res.status(400).json({
                 ok: false,
-                err: err
+                error: err
             });
         }
 
-
+        // el status 200 esta implicito por ende no es necesario enviarlo.
         res.json({
             ok: true,
             usuario: usuarioDB
         });
-
     });
-    /*
-        if (body.nombre === undefined) {
-            res.status(400).json({
-                ok: false,
-                mensaje: "El nombre es requerido"
-            });
-        } else {
-
-            res.json({
-                usuario: body
-            });
-        }
-    */
 });
 
 app.put('/usuario/:idRes', function(req, res) {
 
     let id = req.params.idRes;
+    let body = _.pick(req.body, ['nombre',
+        'email',
+        'img',
+        'role',
+        'estado'
+    ]);
 
-    let body = req.body;
-    Usuario.findByIdAndUpdate(id, body, { new: true },
+    // Se puede hacer esto pero si son muchos campos no aplica asi
+    // que mejor se utiliza underscore como se ve en la linea 43
+    // delete body.password;
+    // delete body.google;
+
+    Usuario.findByIdAndUpdate(id, body, { new: true, runValidators: true },
         (err, usuarioDB) => {
             if (err) {
                 return res.status(400).json({
