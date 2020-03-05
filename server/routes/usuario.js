@@ -14,7 +14,7 @@ app.get('/usuario', function(req, res) {
     let limite = req.query.limite || 5;
     limite = Number(limite);
 
-    Usuario.find({}, 'nombre email role estado google img')
+    Usuario.find({ estado: true }, 'nombre email role estado google img')
         .skip(desde)
         .limit(limite)
         .exec((err, usuariosDB) => {
@@ -25,7 +25,7 @@ app.get('/usuario', function(req, res) {
                 });
             };
 
-            Usuario.count({}, (err, conteo) => {
+            Usuario.count({ estado: true }, (err, conteo) => {
                 res.json({
                     ok: true,
                     usuariosDB,
@@ -87,7 +87,7 @@ app.put('/usuario/:idRes', function(req, res) {
                     ok: false,
                     err: err
                 });
-            }
+            };
             res.json({
                 ok: true,
                 usuario: usuarioDB
@@ -98,7 +98,58 @@ app.put('/usuario/:idRes', function(req, res) {
 
 });
 
-app.delete('/usuario', function(req, res) {
-    res.json('delete usuario');
+/**
+ * Metodo para eliminar registros
+ */
+app.delete('/usuario/:id', function(req, res) {
+
+    let id = req.params.id;
+
+    // Borrado fisico
+    Usuario.findByIdAndRemove(id, (err, usuarioEliminado) => {
+        if (err) {
+            return res.status(400).json({
+                ok: false,
+                err: err
+            });
+        };
+
+        if (!usuarioEliminado) {
+            return res.status(400).json({
+                ok: false,
+                err: `Usuario no encontrado, id: ${id}`
+            });
+        };
+
+        res.json({
+            ok: true,
+            usuarioEliminado
+        });
+    });
+
+});
+
+app.delete('/usuarioInactivar/:id', function(req, res) {
+
+    let id = req.params.id;
+
+    let cambiaEstado = {
+        estado: false
+    };
+
+    Usuario.findByIdAndUpdate(id, cambiaEstado, { new: true }, (err, usuarioDB) => {
+
+        if (err) {
+            return res.status(400).json({
+                ok: false,
+                err
+            });
+        };
+
+        res.json({
+            ok: true,
+            usuarioDB
+        });
+    })
 });
 module.exports = app;
