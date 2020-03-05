@@ -7,7 +7,35 @@ const app = express();
 
 // Servicios
 app.get('/usuario', function(req, res) {
-    res.json('get usuario local');
+
+    let desde = req.query.desde || 0;
+    desde = Number(desde);
+
+    let limite = req.query.limite || 5;
+    limite = Number(limite);
+
+    Usuario.find({}, 'nombre email role estado google img')
+        .skip(desde)
+        .limit(limite)
+        .exec((err, usuariosDB) => {
+            if (err) {
+                return res.status(400).json({
+                    ok: false,
+                    error: err
+                });
+            };
+
+            Usuario.count({}, (err, conteo) => {
+                res.json({
+                    ok: true,
+                    usuariosDB,
+                    numeroRegistros: conteo
+                });
+            });
+
+
+        });
+
 });
 
 app.post('/usuario', function(req, res) {
