@@ -32,3 +32,14 @@ Permite Visualizar una variable
 Permite eliminar una variable
 	heroku config:unset nombre
 ```
+
+# Configuracion en postman
+
+Se puede configurar e postman en la parte de test mediante codigo javascript la variable de entorno
+Ver las referencias:
+```
+Video 126 del curso de node
+```
+```
+https://learning.postman.com/docs/postman/api-documentation/documenting-your-api/
+```

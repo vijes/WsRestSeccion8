@@ -36,13 +36,13 @@ app.post('/login', (req, res) => {
         }
 
         let token = jwt.sign({
-                usuarioDB
-            }, 'secret-prueba', // }, 'se_puede-poner-lo-que-se-quiera');
+                usuario: usuarioDB
+            }, process.env.SEED, // }, 'se_puede-poner-lo-que-se-quiera');
             { expiresIn: process.env.CADUCIDAD_TOKEN });
 
         res.json({
             ok: true,
-            usuarioDB,
+            usuario: usuarioDB,
             token: token
         });
 

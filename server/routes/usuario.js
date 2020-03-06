@@ -1,14 +1,19 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
 const _ = require('underscore');
+const { verificaToken } = require('../middlewares/autenticacion');
+const { verificarRoleAdmin } = require('../middlewares/autenticacion');
 
 const Usuario = require('../models/usuario');
 
 const app = express();
 
 // Servicios
-app.get('/usuario', function(req, res) {
+app.get('/usuario', verificaToken, (req, res) => {
 
+    // return res.json({
+    //     usuario: req.usuario
+    // });
     let desde = req.query.desde || 0;
     desde = Number(desde);
 
@@ -39,7 +44,7 @@ app.get('/usuario', function(req, res) {
 
 });
 
-app.post('/usuario', function(req, res) {
+app.post('/usuario', [verificaToken, verificarRoleAdmin], (req, res) => {
 
     let body = req.body;
 
@@ -66,7 +71,7 @@ app.post('/usuario', function(req, res) {
     });
 });
 
-app.put('/usuario/:idRes', function(req, res) {
+app.put('/usuario/:idRes', [verificaToken, verificarRoleAdmin], (req, res) => {
 
     let id = req.params.idRes;
     let body = _.pick(req.body, ['nombre',
@@ -102,7 +107,7 @@ app.put('/usuario/:idRes', function(req, res) {
 /**
  * Metodo para eliminar registros
  */
-app.delete('/usuario/:id', function(req, res) {
+app.delete('/usuario/:id', verificaToken, (req, res) => {
 
     let id = req.params.id;
 
@@ -130,7 +135,7 @@ app.delete('/usuario/:id', function(req, res) {
 
 });
 
-app.delete('/usuarioInactivar/:id', function(req, res) {
+app.delete('/usuarioInactivar/:id', verificaToken, (req, res) => {
 
     let id = req.params.id;
 
