@@ -107,7 +107,7 @@ app.put('/usuario/:idRes', [verificaToken, verificarRoleAdmin], (req, res) => {
 /**
  * Metodo para eliminar registros
  */
-app.delete('/usuario/:id', verificaToken, (req, res) => {
+app.delete('/usuario/:id', [verificaToken, verificarRoleAdmin], (req, res) => {
 
     let id = req.params.id;
 
@@ -135,7 +135,7 @@ app.delete('/usuario/:id', verificaToken, (req, res) => {
 
 });
 
-app.delete('/usuarioInactivar/:id', verificaToken, (req, res) => {
+app.delete('/usuarioInactivar/:id', [verificaToken, verificarRoleAdmin], (req, res) => {
 
     let id = req.params.id;
 
