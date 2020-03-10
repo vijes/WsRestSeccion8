@@ -11,6 +11,10 @@ let categoriaSchema = new Schema({
         unique: true,
         required: [true, 'Es requerida la descripcion de la categoria']
     },
+    estado: {
+        type: Boolean,
+        default: true
+    },
     usuario: {
         type: Schema.Types.ObjectId,
         ref: 'Usuario'
