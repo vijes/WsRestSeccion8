@@ -12,16 +12,10 @@ let Usuario = require('../models/usuario');
  */
 app.get('/categoria', (req, res) => {
 
-    Categoria.find({}, (err, categoriasDB) => {
-        if (err) {
-            return res.status(400).json({
-                ok: false,
-                message: 'Ocurrio un erro al buscar los usuarios.',
-                err
-            });
-        }
-
-        Usuario.populate(categoriasDB, { path: 'usuario' }, (err, categoriasDB) => {
+    Categoria.find()
+        .sort('descripcion')
+        .populate('usuario', 'nombre email')
+        .exec((err, categoriasDB) => {
             if (err) {
                 return res.status(400).json({
                     ok: false,
@@ -35,7 +29,6 @@ app.get('/categoria', (req, res) => {
                 categorias: categoriasDB
             });
         });
-    });
 });
 /**
  * Mostrar todas la categoria por id
@@ -117,7 +110,7 @@ app.post('/categoria', verificaToken, (req, res) => {
             }
             res.json({
                 ok: true,
-                message: 'Usuario creado exitosamente',
+                message: 'Categoria creado exitosamente',
                 categoriaDB
             });
         });
