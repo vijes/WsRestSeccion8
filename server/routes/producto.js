@@ -47,6 +47,37 @@ app.get('/producto', verificaToken, (req, res) => {
         });
 });
 
+// ===========================
+//  Buscar productos
+// ===========================
+app.get('/productos/buscar/:termino', verificaToken, (req, res) => {
+
+    let termino = req.params.termino;
+
+    let regex = new RegExp(termino, 'i');
+
+    Producto.find({ nombre: regex })
+        .populate('categoria', 'nombre')
+        .exec((err, productos) => {
+
+
+            if (err) {
+                return res.status(500).json({
+                    ok: false,
+                    err
+                });
+            }
+
+            res.json({
+                ok: true,
+                productos
+            })
+
+        })
+
+
+});
+
 /**
  * Obtener producto por ID
  */
@@ -111,7 +142,7 @@ app.post('/producto/', verificaToken, (req, res) => {
             });
         }
 
-        res.json({
+        res.status(201).json({
             ok: true,
             message: 'Producto creado con exito',
             productoDB
